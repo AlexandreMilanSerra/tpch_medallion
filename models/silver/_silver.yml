@@ -21,8 +21,9 @@ models:
         description: Nation where the customer is located.
         data_tests:
           - relationships:
-              to: ref('stg_geography')
-              field: nation_id
+              arguments:
+                to: ref('stg_geography')
+                field: nation_id
 
   - name: stg_supplier
     description: Cleaned suppliers. One row per supplier.
@@ -34,8 +35,9 @@ models:
         description: Nation where the supplier is located.
         data_tests:
           - relationships:
-              to: ref('stg_geography')
-              field: nation_id
+              arguments:
+                to: ref('stg_geography')
+                field: nation_id
 
   - name: stg_part
     description: Cleaned parts. One row per part.
@@ -48,18 +50,21 @@ models:
     description: Which supplier offers which part, with cost and availability. One row per part and supplier.
     data_tests:
       - unique_combination:
-          combination_of_columns: [part_id, supplier_id]
+          arguments:
+            combination_of_columns: [part_id, supplier_id]
     columns:
       - name: part_id
         data_tests:
           - relationships:
-              to: ref('stg_part')
-              field: part_id
+              arguments:
+                to: ref('stg_part')
+                field: part_id
       - name: supplier_id
         data_tests:
           - relationships:
-              to: ref('stg_supplier')
-              field: supplier_id
+              arguments:
+                to: ref('stg_supplier')
+                field: supplier_id
 
   - name: stg_orders
     description: Cleaned orders with readable status and priority. One row per order.
@@ -71,18 +76,21 @@ models:
         description: Customer who placed the order.
         data_tests:
           - relationships:
-              to: ref('stg_customer')
-              field: customer_id
+              arguments:
+                to: ref('stg_customer')
+                field: customer_id
       - name: order_status
         description: Readable order status.
         data_tests:
           - accepted_values:
-              values: ['Open', 'Fulfilled', 'Partially fulfilled']
+              arguments:
+                values: ['Open', 'Fulfilled', 'Partially fulfilled']
       - name: order_priority
         description: Readable order priority.
         data_tests:
           - accepted_values:
-              values: ['Urgent', 'High', 'Medium', 'Not Specified', 'Low']
+              arguments:
+                values: ['Urgent', 'High', 'Medium', 'Not Specified', 'Low']
 
   - name: stg_lineitem
     description: >
@@ -90,7 +98,8 @@ models:
       and late delivery. One row per order line.
     data_tests:
       - unique_combination:
-          combination_of_columns: [order_id, line_number]
+          arguments:
+            combination_of_columns: [order_id, line_number]
     columns:
       - name: order_line_id
         description: Single-column key built from order id and line number.
@@ -99,20 +108,23 @@ models:
         description: Order this line belongs to.
         data_tests:
           - relationships:
-              to: ref('stg_orders')
-              field: order_id
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
       - name: part_id
         description: Part sold on this line.
         data_tests:
           - relationships:
-              to: ref('stg_part')
-              field: part_id
+              arguments:
+                to: ref('stg_part')
+                field: part_id
       - name: supplier_id
         description: Supplier who delivered this line.
         data_tests:
           - relationships:
-              to: ref('stg_supplier')
-              field: supplier_id
+              arguments:
+                to: ref('stg_supplier')
+                field: supplier_id
       - name: net_revenue
         description: Extended price after discount.
       - name: is_late_delivery
