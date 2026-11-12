@@ -15,34 +15,60 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+# Make sure the governance tags exist before anything is built
+on-run-start:
+  - "{{ create_governance_tags() }}"
+
 models:
   tpch_medallion:
 
-    # Bronze: raw copy of the source
+    # Write the YAML descriptions into Snowflake as comments
+    +persist_docs:
+      relation: true
+      columns: true
+
+    # Apply the Snowflake object tags after each model is built
+    +post-hook: "{{ apply_tags() }}"
+
     bronze:
       +schema: bronze
       +materialized: table
       +tags: ['bronze']
+      +meta:
+        layer: 'bronze'
+        domain: 'sales'
+        owner: 'data_engineering'
+        certified: 'false'
 
-    # Silver: cleaned and conformed
     silver:
       +schema: silver
       +materialized: table
       +tags: ['silver']
+      +meta:
+        layer: 'silver'
+        domain: 'sales'
+        owner: 'data_engineering'
+        certified: 'false'
 
-    # Gold: star schema
     gold:
       +schema: gold
       +materialized: table
       +tags: ['gold']
+      +meta:
+        layer: 'gold'
+        domain: 'sales'
+        owner: 'data_engineering'
+        certified: 'true'
 
-    # Semantic layer: semantic view on the Gold star
-    # (materialized='semantic_view' is set inside the model file itself)
+    # (materialized='semantic_view' is set inside the model file itself;
+    # persist_docs is off because that materialization may not support it)
     semantic:
       +schema: semantic
       +tags: ['semantic']
+      +persist_docs:
+        relation: false
+        columns: false
 
-# Taxonomy and ontology seeds
 seeds:
   tpch_medallion:
     +schema: governance
