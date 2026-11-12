@@ -1,0 +1,6 @@
+concept,definition,gold_model
+Customer,A company that buys parts,dim_customer
+Supplier,A company that supplies parts,dim_supplier
+Part,A product that can be sold,dim_part
+Order line,One part sold on one order,fct_order_lines
+Date,A calendar day,dim_date

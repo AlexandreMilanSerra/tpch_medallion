@@ -1,0 +1,9 @@
+subject,relation,object,cardinality,source_model
+Customer,places,Order,one to many,stg_orders
+Order,contains,Order line,one to many,stg_lineitem
+Order line,is of,Part,many to one,stg_lineitem
+Order line,is delivered by,Supplier,many to one,stg_lineitem
+Supplier,offers,Part,many to many,stg_partsupp
+Customer,is located in,Nation,many to one,stg_customer
+Supplier,is located in,Nation,many to one,stg_supplier
+Nation,belongs to,Region,many to one,stg_geography

@@ -1,0 +1,23 @@
+taxonomy,level,term,parent_term,definition
+Geography,1,Region,,Top level of the geographic hierarchy
+Geography,2,Nation,Region,Country that belongs to exactly one region
+Part hierarchy,1,Manufacturer,,Company that makes the part
+Part hierarchy,2,Brand,Manufacturer,Brand sold under one manufacturer
+Part hierarchy,3,Part type,Brand,Kind of part within a brand
+Customer segment,1,AUTOMOBILE,,Customers in the automobile market
+Customer segment,1,BUILDING,,Customers in the building market
+Customer segment,1,FURNITURE,,Customers in the furniture market
+Customer segment,1,HOUSEHOLD,,Customers in the household market
+Customer segment,1,MACHINERY,,Customers in the machinery market
+Order priority,1,Urgent,,Priority code 1
+Order priority,1,High,,Priority code 2
+Order priority,1,Medium,,Priority code 3
+Order priority,1,Not Specified,,Priority code 4
+Order priority,1,Low,,Priority code 5
+Ship mode,1,AIR,,Delivery by air
+Ship mode,1,REG AIR,,Delivery by regular air
+Ship mode,1,RAIL,,Delivery by rail
+Ship mode,1,TRUCK,,Delivery by truck
+Ship mode,1,SHIP,,Delivery by ship
+Ship mode,1,MAIL,,Delivery by mail
+Ship mode,1,FOB,,Free on board
