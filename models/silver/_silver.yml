@@ -30,3 +30,118 @@ models:
           pii: true
       - name: phone
         description: Phone number. Personal data in a real project.
+        meta:
+          pii: true
+
+  - name: stg_supplier
+    description: Cleaned suppliers. One row per supplier.
+    columns:
+      - name: supplier_id
+        description: Supplier identifier.
+        data_tests: [unique, not_null]
+      - name: nation_id
+        description: Nation where the supplier is located.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_geography')
+                field: nation_id
+      - name: address
+        description: Address. Personal data in a real project.
+        meta:
+          pii: true
+      - name: phone
+        description: Phone number. Personal data in a real project.
+        meta:
+          pii: true
+
+  - name: stg_part
+    description: Cleaned parts. One row per part.
+    columns:
+      - name: part_id
+        description: Part identifier.
+        data_tests: [unique, not_null]
+
+  - name: stg_partsupp
+    description: Which supplier offers which part, with cost and availability. One row per part and supplier.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [part_id, supplier_id]
+    columns:
+      - name: part_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_part')
+                field: part_id
+      - name: supplier_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_supplier')
+                field: supplier_id
+
+  - name: stg_orders
+    description: Cleaned orders with readable status and priority. One row per order.
+    columns:
+      - name: order_id
+        description: Order identifier.
+        data_tests: [unique, not_null]
+      - name: customer_id
+        description: Customer who placed the order.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer')
+                field: customer_id
+      - name: order_status
+        description: Readable order status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Open', 'Fulfilled', 'Partially fulfilled']
+      - name: order_priority
+        description: Readable order priority.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Urgent', 'High', 'Medium', 'Not Specified', 'Low']
+
+  - name: stg_lineitem
+    description: >
+      Order lines with readable flags and line-level metrics such as net revenue
+      and late delivery. One row per order line.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [order_id, line_number]
+    columns:
+      - name: order_line_id
+        description: Single-column key built from order id and line number.
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: Order this line belongs to.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: part_id
+        description: Part sold on this line.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_part')
+                field: part_id
+      - name: supplier_id
+        description: Supplier who delivered this line.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_supplier')
+                field: supplier_id
+      - name: net_revenue
+        description: Extended price after discount.
+      - name: is_late_delivery
+        description: True when the goods were received after the committed date.
