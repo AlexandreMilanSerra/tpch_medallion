@@ -24,6 +24,7 @@ with base as (
         l_receiptdate::date             as receipt_date,
         trim(l_shipmode)                as ship_mode
     from {{ ref('brz_lineitem') }}
+    where {{ lineitem_reject_reason() }} is null
 )
 
 select
