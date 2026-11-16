@@ -30,3 +30,15 @@ models:
           pii: true
       - name: phone
         description: Phone number. Personal data in a real project.
+  
+  - name: rej_lineitem
+    description: >
+      Quarantine table. Order lines from Bronze that broke a quality rule,
+      with the reason. Empty when the data is clean.
+    columns:
+      - name: reject_reason
+        description: Which rule the row broke.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['discount out of range', 'receipt before ship', 'non-positive quantity']
