@@ -1,7 +1,11 @@
-
 target/
 dbt_packages/
 logs/
+.venv/
 .env
 .user.yml
 .DS_Store
+.claude/
+*.p8
+*.pem
+snowflake_key.p8
