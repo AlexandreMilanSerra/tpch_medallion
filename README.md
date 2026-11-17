@@ -209,3 +209,4 @@ required to run the project locally.
   separate warehouses per workload.
 - **Idempotent setup scripts:** make the one-off setup SQL safe to re-run.
 - **History:** CDC at Bronze and an SCD Type 2 customer dimension.
+Pipeline demo run: 2026-11-17
