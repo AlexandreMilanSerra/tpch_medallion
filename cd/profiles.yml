@@ -1,0 +1,13 @@
+tpch_medallion:
+  target: prod
+  outputs:
+    prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
+      role: DBT_ROLE
+      database: TPCH_DEMO
+      warehouse: DBT_WH
+      schema: DBT_DEV
+      threads: 4

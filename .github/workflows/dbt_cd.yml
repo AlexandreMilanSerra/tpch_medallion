@@ -1,0 +1,56 @@
+  name: dbt-cd
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two deployments at the same time
+concurrency:
+  group: dbt-cd
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Pauses here until a required reviewer approves
+    environment: production
+    env:
+      DBT_PROFILES_DIR: cd
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_CD_USER }}
+      SNOWFLAKE_PRIVATE_KEY_PATH: ${{ github.workspace }}/snowflake_cd_key.p8
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dbt
+        run: pip install dbt-core==1.12.6 dbt-snowflake==1.12.5
+
+      - name: Write private key
+        env:
+          CD_KEY: ${{ secrets.SNOWFLAKE_CD_PRIVATE_KEY }}
+        run: |
+          printf '%s\n' "$CD_KEY" > snowflake_cd_key.p8
+          chmod 600 snowflake_cd_key.p8
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: Deploy (dbt build to TPCH_DEMO)
+        run: dbt build --target prod
+
+      - name: Generate docs
+        run: dbt docs generate --target prod
+
+      - name: Upload docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-docs
+          path: |
+            target/manifest.json
+            target/catalog.json
+            target/index.html
