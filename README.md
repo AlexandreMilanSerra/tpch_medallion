@@ -50,14 +50,17 @@ revenue.
 
 ## CI/CD
 
-GitHub Actions (`.github/workflows/dbt_ci.yml`) runs `dbt build` on every pull
-request and on every merge to `main`, in a separate `TPCH_CI` database with its own
-limited role and a key-pair service user. `main` is protected by a ruleset that
-requires a pull request and a passing `dbt-build` check. dbt docs are saved as a
-workflow artifact.
+**CI** (`.github/workflows/dbt_ci.yml`) runs on every pull request to `main`. It installs dbt on a GitHub runner, connects to Snowflake with a key-pair service user, and runs `dbt deps`, `dbt build` (seeds, models and tests) and `dbt docs generate` in an isolated database, `TPCH_CI`, under `DBT_CI_ROLE`. A repository ruleset requires a pull request and a passing `dbt-build` check before anything merges to `main`.
 
-Deployment to the demo database is manual. In production this would be a separate
-job with its own production role and approval.
+**CD** (`.github/workflows/dbt_cd.yml`) runs after a merge to `main` and can also be started manually. The deploy job uses the GitHub environment `production`, which requires a reviewer's approval. After approval it runs `dbt build --target prod` against `TPCH_DEMO` as a separate service user (`DBT_CD_USER`, role `DBT_ROLE`) and publishes the dbt docs as an artifact. A concurrency rule prevents two deployments from running at once.
+
+**Secrets** (names only; values live in GitHub, never in the repo):
+- Repository: `SNOWFLAKE_ACCOUNT` and the CI user and key.
+- Environment `production`: `SNOWFLAKE_CD_USER`, `SNOWFLAKE_CD_PRIVATE_KEY`.
+
+**Setup scripts:** `setup/01_ci.sql` creates the CI role, database and user; `setup/03_cd.sql` creates the deploy user.
+
+**Next steps for production:** Slim CI (`state:modified+`), a CI schema per pull request, scheduled runs with failure alerts, key rotation, and incremental models.
 
 ## Semantic layer and Cortex
 
