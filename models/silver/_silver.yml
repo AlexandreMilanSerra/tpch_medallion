@@ -25,7 +25,7 @@ models:
                 to: ref('stg_geography')
                 field: nation_id
       - name: address
-        description: Address. Personal data in a real project. 2026-11-18
+        description: Address. Personal data in a real project. 2026-11-18.
         meta:
           pii: true
       - name: phone
